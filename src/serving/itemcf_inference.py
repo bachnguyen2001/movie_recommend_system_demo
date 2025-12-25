@@ -2,6 +2,7 @@ import pandas as pd
 from pathlib import Path
 from collections import defaultdict
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from ingestion.filter_ratings import filter_ratings
 
@@ -36,20 +37,32 @@ def generate_itemcf_recommendations() -> pd.DataFrame:
 
     user_groups = ratings.groupby("userId")["movieId"].apply(set)
 
-    now = datetime.utcnow()
+    now = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh"))
     records = []
 
     for user_id, seen_items in user_groups.items():
         scores = defaultdict(float)
 
-        for item in seen_items:
-            for neighbor, sim in sim_lookup.get(item, []):
+        
+        # Sum of ratings for items the user has seen, used for normalization
+        # This is the denominator for the weighted average
+        rating_sum = sum(seen_items_with_ratings.values())
+
+        for item_id, rating in seen_items_with_ratings.items():
+            for neighbor, sim in sim_lookup.get(item_id, []):
                 if neighbor in seen_items:
                     continue
-                scores[neighbor] += sim
+                # Accumulate weighted similarity (similarity * user's rating for the item)
+                scores[neighbor] += sim * rating
 
         if not scores:
             continue
+
+        for m in scores:
+            # Divide by the sum of ratings to get a weighted average similarity
+            if rating_sum > 0: # Avoid division by zero if a user has no ratings (shouldn't happen with filter_ratings)
+                scores[m] /= rating_sum
+            scores[m] /= 5.0  # Normalize to 0-1 (assuming max rating is 5)
 
         top_items = sorted(
             scores.items(),

@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import explode, col, current_timestamp
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from pyspark.ml.recommendation import ALSModel
 
 MODEL_PATH = "data-lake/models/als/v1"
@@ -23,7 +24,8 @@ def generate_als_recommendations_spark():
             .select(
                 col("userId").alias("user_id"),
                 col("rec.movieId").alias("movie_id"),
-                col("rec.rating").alias("score"),
+                col("rec.movieId").alias("movie_id"),
+                (col("rec.rating") / 5.0).alias("score"),
             )
             .withColumn("model_version", col("user_id") * 0 + MODEL_VERSION)
             .withColumn("generated_at", current_timestamp())
@@ -38,4 +40,7 @@ def generate_als_recommendations_pandas(limit_users: int | None = None):
     sdf = generate_als_recommendations_spark()
     if limit_users:
         sdf = sdf.limit(limit_users * TOP_K)
-    return sdf.toPandas()
+    
+    pdf = sdf.toPandas()
+    pdf["generated_at"] = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh"))
+    return pdf

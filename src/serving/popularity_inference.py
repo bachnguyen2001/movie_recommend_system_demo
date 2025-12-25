@@ -1,5 +1,6 @@
 import pandas as pd
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from ingestion.filter_ratings import filter_ratings
 
@@ -27,7 +28,13 @@ def get_popularity_recommendations(
         .head(top_k)
     )
 
-    now = datetime.utcnow()
+    # Normalize score to 0-1
+    if not popular_items.empty:
+        max_score = popular_items["score"].max()
+        if max_score > 0:
+            popular_items["score"] = popular_items["score"] / max_score
+
+    now = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh"))
 
     popular_items["user_id"] = user_id if user_id is not None else -1
     popular_items["movie_id"] = popular_items["movieId"]
