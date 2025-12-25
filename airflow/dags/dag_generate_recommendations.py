@@ -19,26 +19,17 @@ with DAG(
 
     generate_als = BashOperator(
         task_id="generate_als_recommendations",
-        bash_command="""
-        cd /mnt/e/learn/movie_recommend_system_s/movie_recommend_system_3 &&
-        uv run python tests/test_als_write.py
-        """,
+        bash_command="uv run python src/jobs/generate_als_recommendations.py",
     )
 
     generate_itemcf = BashOperator(
         task_id="generate_itemcf_recommendations",
-        bash_command="""
-        cd /mnt/e/learn/movie_recommend_system_s/movie_recommend_system_3 &&
-        uv run python tests/test_itemcf_write.py
-        """,
+        bash_command="uv run python src/jobs/generate_itemcf_recommendations.py",
     )
 
     generate_popularity = BashOperator(
         task_id="generate_popularity_recommendations",
-        bash_command="""
-        cd /mnt/e/learn/movie_recommend_system_s/movie_recommend_system_3 &&
-        uv run python src/serving/popularity_inference.py
-        """,
+        bash_command="uv run python src/jobs/generate_popularity_recommendations.py",
     )
 
     generate_als >> generate_itemcf >> generate_popularity
