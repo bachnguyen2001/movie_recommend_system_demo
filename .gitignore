@@ -1,0 +1,75 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+
+# Airflow
+airflow/logs/
+airflow/airflow.db
+airflow/airflow.cfg
+airflow/unittests.cfg
+airflow/webserver_config.py
+airflow/.env
+
+
+# Spark
+spark-warehouse/
+metastore_db/
+derby.log
+*.jar
+/tmp/spark-*
+/tmp/blockmgr-*
+
+
+# Data / Artifacts (ML)
+data/
+data-lake/
+artifacts/
+models/
+mlruns/
+*.parquet
+*.csv
+
+# GIỮ STRUCTURE mà bỏ data
+!data-lake/.gitkeep
+!models/.gitkeep
+
+
+# Logs
+*.log
+logs/
+nohup.out
+
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Secrets / Config
+.env
+.env.*
+*.key
+*.pem
+
+# Coverage / Build
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+

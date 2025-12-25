@@ -1,0 +1,7 @@
+psycopg2-binary==2.9.11
+PyYAML>=6.0
+pandas
+pyarrow>=15.0.0
+sqlalchemy
+apache-airflow
+pyspark==3.5.7

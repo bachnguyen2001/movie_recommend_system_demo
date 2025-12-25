@@ -1,0 +1,3 @@
+# configs/airflow.yaml
+data_lake:
+  raw_path: data-lake/raw
